@@ -18,4 +18,5 @@ public interface ICustomerService {
 	public List<Customer> findAll();
 	public List<Customer> findListNotAssociation();
 	public List<Customer> findListAssociation(String decidedzoneId);
+	public void assignCustomerToDecidedzone(String decidedzoneId,Integer[] customerIds);
 }

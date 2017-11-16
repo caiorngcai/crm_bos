@@ -30,7 +30,7 @@ public class CustomerServiceImpl implements ICustomerService{
 	 * 查询所有客户的方法，作为webservice方法
 	 */
 	public List<Customer> findAll() {
-		String sql="servlet * from t_customer";
+		String sql="select * from t_customer";
 		List<Customer> list=jdbcTemplate.query(sql,new RowMapper<Customer>() {
 
 			@Override
@@ -53,7 +53,7 @@ public class CustomerServiceImpl implements ICustomerService{
 	 * 查询未与定区关联的客户方法
 	 */
 	public List<Customer> findListNotAssociation() {
-		String sql="servlet * from t_customer where decidedzone_id is null";
+		String sql="select * from t_customer where decidedzone_id is null";
 		List<Customer> list=jdbcTemplate.query(sql,new RowMapper<Customer>() {
 			@Override
 			public Customer mapRow(ResultSet rs, int arg1) throws SQLException {
@@ -74,7 +74,7 @@ public class CustomerServiceImpl implements ICustomerService{
 	 *查询与定区关联的客户 
 	 */
 	public List<Customer> findListAssociation(String decidedzoneId) {
-		String sql="servlet * from t_customer where decidedzone_id=?";
+		String sql="select * from t_customer where decidedzone_id=?";
 		List<Customer> list=jdbcTemplate.query(sql,new RowMapper<Customer>() {
 
 			@Override
@@ -90,6 +90,18 @@ public class CustomerServiceImpl implements ICustomerService{
 			}
 		},decidedzoneId);
 		return list;
+	}
+	/* 
+	 * 定区关联客户的webservice方法
+	 */
+	public void assignCustomerToDecidedzone(String decidedzoneId, Integer[] customerIds) {
+		String sql="update t_customer set decidedzone_id=null where decidedzone_id=?";
+		//清空所有，重新来过
+		jdbcTemplate.update(sql, decidedzoneId);
+		sql="update t_customer set decidedzone_id= ? where id = ?";
+		for (Integer id : customerIds) {
+			jdbcTemplate.update(sql,decidedzoneId,id);
+		}
 	}
 
 }
